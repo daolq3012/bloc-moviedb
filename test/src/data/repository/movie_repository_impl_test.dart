@@ -16,10 +16,12 @@ void main() {
       final type = Constant.popular;
       final API_KEY = 'd61431a2fb64b6e56c6f086952e63ab6';
 
-      when(client.get('https://api.themoviedb.org/3/movie/$type?api_key=$API_KEY')).thenAnswer((_) async => Response(
-            createMovieJson,
-            200,
-          ));
+      when(client.get(Uri.parse(
+              'https://api.themoviedb.org/3/movie/$type?api_key=$API_KEY')))
+          .thenAnswer((_) async => Response(
+                createMovieJson,
+                200,
+              ));
 
       final repository = MovieRepositoryImpl(client: client);
 
@@ -31,33 +33,39 @@ void main() {
       final type = Constant.popular;
       final API_KEY = 'd61431a2fb64b6e56c6f086952e63ab6';
 
-      when(client.get('https://api.themoviedb.org/3/movie/$type?api_key=$API_KEY')).thenAnswer((_) async => Response(
-        'Not Found',
-        404,
-      ));
+      when(client.get(Uri.parse(
+              'https://api.themoviedb.org/3/movie/$type?api_key=$API_KEY')))
+          .thenAnswer((_) async => Response(
+                'Not Found',
+                404,
+              ));
 
       final repository = MovieRepositoryImpl(client: client);
 
       expect(
-            () async => await repository.fetchMovies(type),
+        () async => await repository.fetchMovies(type),
         throwsA(isA<Exception>()),
       );
     });
 
-    test('Throws [Exception] when fetch Movie with Type [popular] on parser error', () async {
+    test(
+        'Throws [Exception] when fetch Movie with Type [popular] on parser error',
+        () async {
       final client = ClientMock();
       final type = Constant.popular;
       final API_KEY = 'd61431a2fb64b6e56c6f086952e63ab6';
 
-      when(client.get('https://api.themoviedb.org/3/movie/$type?api_key=$API_KEY')).thenAnswer((_) async => Response(
-        'error parser',
-        200,
-      ));
+      when(client.get(Uri.parse(
+              'https://api.themoviedb.org/3/movie/$type?api_key=$API_KEY')))
+          .thenAnswer((_) async => Response(
+                'error parser',
+                200,
+              ));
 
       final repository = MovieRepositoryImpl(client: client);
 
       expect(
-            () async => await repository.fetchMovies(type),
+        () async => await repository.fetchMovies(type),
         throwsA(isA<Exception>()),
       );
     });

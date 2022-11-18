@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ErrorPage extends StatelessWidget {
@@ -21,7 +20,7 @@ class ErrorPage extends StatelessWidget {
             message,
             textAlign: TextAlign.center,
           ),
-          OutlineButton(
+          OutlinedButton(
             onPressed: () => retry,
             child: Text(
               'Retry',

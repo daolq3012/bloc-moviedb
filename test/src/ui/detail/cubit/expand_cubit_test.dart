@@ -23,7 +23,7 @@ void main() {
         'ExpandCubit toggle',
         build: () => ExpandCubit(),
         act: (ExpandCubit cubit) => cubit.toggle(),
-        expect: <bool>[true],
+        expect: () => <bool>[true],
       );
     });
   });

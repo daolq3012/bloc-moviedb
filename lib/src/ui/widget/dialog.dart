@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomDialog {
@@ -12,8 +11,15 @@ class CustomDialog {
 
   AlertDialog _alertDialog;
 
-  CustomDialog({@required this.context, @required this.title, this.message, this.positive, this.positiveCallback, this.negative, this.negativeCallback}) {
-    final okButton = FlatButton(
+  CustomDialog(
+      {@required this.context,
+      @required this.title,
+      this.message,
+      this.positive,
+      this.positiveCallback,
+      this.negative,
+      this.negativeCallback}) {
+    final okButton = TextButton(
       child: Text(positive),
       onPressed: positiveCallback,
     );
@@ -25,7 +31,7 @@ class CustomDialog {
         actions: [okButton],
       );
     } else {
-      final cancelButton = FlatButton(
+      final cancelButton = TextButton(
         child: Text(negative),
         onPressed: negativeCallback,
       );
