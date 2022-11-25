@@ -1,11 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_bloc.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_event.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_state.dart';
-import 'package:flutter_bloc_base/src/data/constant/Constant.dart';
+import 'package:flutter_bloc_base/src/data/constant/constant.dart';
 import 'package:flutter_bloc_base/src/data/repository/movie_repository_impl.dart';
 import 'package:flutter_bloc_base/src/models/models.dart';
 import 'package:flutter_bloc_base/src/ui/theme/colors.dart';
@@ -14,13 +13,15 @@ import 'package:flutter_gen/gen_l10n/resource.dart';
 
 class CategoryView extends StatelessWidget {
   final Function(Movie) actionOpenCategory;
+
   CategoryView({Key key, @required this.actionOpenCategory}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) {
-        return MovieBloc(MovieRepositoryImpl())..add(FetchMovieWithType(Constant.upcoming));
+        return MovieBloc(MovieRepositoryImpl())
+          ..add(FetchMovieWithType(Constant.upcoming));
       },
       child: _createCategory(context),
     );
@@ -35,7 +36,9 @@ class CategoryView extends StatelessWidget {
           return ErrorPage(
             message: state.message,
             retry: () {
-              context.watch<MovieBloc>()..add(FetchMovieWithType(Constant.upcoming));
+              context
+                  .watch<MovieBloc>()
+                  .add(FetchMovieWithType(Constant.upcoming));
             },
           );
         } else if (state is MovieFetched) {
@@ -94,7 +97,8 @@ class CategoryView extends StatelessWidget {
                     placeholder: (context, url) => Center(
                       child: CircularProgressIndicator(),
                     ),
-                    imageUrl: 'https://image.tmdb.org/t/p/w500${movie.backdropPath}',
+                    imageUrl:
+                        'https://image.tmdb.org/t/p/w500${movie.backdropPath}',
                     width: width,
                     height: double.infinity,
                     fit: BoxFit.cover,

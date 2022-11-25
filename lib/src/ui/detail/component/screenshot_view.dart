@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_bloc.dart';
@@ -19,7 +18,12 @@ class ScreenshotView extends StatelessWidget {
   final Function(Img) actionOpenImage;
   final Function actionLoadAll;
 
-  const ScreenshotView({Key key, @required this.movieId, @required this.actionOpenImage, @required this.actionLoadAll}) : super(key: key);
+  const ScreenshotView(
+      {Key key,
+      @required this.movieId,
+      @required this.actionOpenImage,
+      @required this.actionLoadAll})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +47,9 @@ class ScreenshotView extends StatelessWidget {
           return ErrorPage(
             message: state.msg,
             retry: () {
-              context.watch<MovieBloc>()..add(FetchMovieWithType(Constant.topRated));
+              context
+                  .watch<MovieBloc>()
+                  .add(FetchMovieWithType(Constant.topRated));
             },
           );
         } else if (state is GetMovieImagesSuccess) {

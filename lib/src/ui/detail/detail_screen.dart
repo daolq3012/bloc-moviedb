@@ -1,11 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_base/src/models/models.dart';
 import 'package:flutter_bloc_base/src/ui/widget/favorite_icon_widget.dart';
 import 'package:flutter_bloc_base/src/ui/detail/component/movie_info_view.dart';
-import 'package:flutter_bloc_base/src/ui/detail/cubit/expand_cubit.dart';
 import 'package:flutter_bloc_base/src/ui/theme/colors.dart';
 import 'package:shape_of_view/shape_of_view.dart';
 
@@ -33,7 +30,8 @@ class DetailScreen extends StatelessWidget {
           builder: (BuildContext context, BoxConstraints viewportConstraints) {
             return SingleChildScrollView(
               child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
+                constraints:
+                    BoxConstraints(minHeight: viewportConstraints.maxHeight),
                 child: Container(
                   child: Column(
                     children: [
@@ -112,7 +110,8 @@ class DetailScreen extends StatelessWidget {
         actions: [
           Container(
             padding: EdgeInsets.only(right: 16.0),
-            child: FavoriteIconWidget(isFavorite: false, onFavoriteChanged: (checked) {}),
+            child: FavoriteIconWidget(
+                isFavorite: false, onFavoriteChanged: (checked) {}),
           ),
         ],
       ),

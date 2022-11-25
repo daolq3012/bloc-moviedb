@@ -20,8 +20,8 @@ class CustomDialog {
       this.negative,
       this.negativeCallback}) {
     final okButton = TextButton(
-      child: Text(positive),
       onPressed: positiveCallback,
+      child: Text(positive),
     );
 
     if (negative == null) {
@@ -32,8 +32,8 @@ class CustomDialog {
       );
     } else {
       final cancelButton = TextButton(
-        child: Text(negative),
         onPressed: negativeCallback,
+        child: Text(negative),
       );
 
       _alertDialog = AlertDialog(

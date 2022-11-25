@@ -12,7 +12,9 @@ class MovieResponse extends Equatable {
   factory MovieResponse.parserFromJson(Map<String, dynamic> result) {
     return MovieResponse(
       page: result['page'],
-      movies: (result['results'] as List)?.map((e) => Movie.parserFromJson(e))?.toList(),
+      movies: (result['results'] as List)
+          ?.map((e) => Movie.parserFromJson(e))
+          ?.toList(),
       totalPages: result['total_pages'],
       totalResult: result['total_results'],
     );

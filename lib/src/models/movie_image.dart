@@ -11,8 +11,14 @@ class MovieImage extends Equatable {
     if (result == null) return null;
 
     return MovieImage(
-      backdrops: (result['backdrops'] as List)?.map((e) => Img.parserFromJson(e))?.toList() ?? List.empty(),
-      posters: (result['posters'] as List)?.map((e) => Img.parserFromJson(e))?.toList() ?? List.empty(),
+      backdrops: (result['backdrops'] as List)
+              ?.map((e) => Img.parserFromJson(e))
+              ?.toList() ??
+          List.empty(),
+      posters: (result['posters'] as List)
+              ?.map((e) => Img.parserFromJson(e))
+              ?.toList() ??
+          List.empty(),
     );
   }
 

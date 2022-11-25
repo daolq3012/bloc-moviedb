@@ -74,7 +74,7 @@ class MovieInfo extends Equatable {
   }
 
   String get country {
-    var result =  '';
+    var result = '';
     if ((countries?.length ?? 0) > 0) {
       for (var i = 0; i < countries.length; i++) {
         result += countries[i].code;
@@ -82,7 +82,7 @@ class MovieInfo extends Equatable {
           result += ', ';
         }
       }
-    } 
+    }
     return result;
   }
 
@@ -109,11 +109,19 @@ class MovieInfo extends Equatable {
       video: result['video'],
       voteAverage: result['vote_average'] ?? 0.0,
       voteCount: result['vote_count'],
-      genres: (result['genres'] as List)?.map((e) => Genre.parserFromJson(e))?.toList(),
-      countries: (result['production_countries'] as List)?.map((e) => Country.parserFromJson(e))?.toList(),
-      companies: (result['production_companies'] as List)?.map((e) => Company.parserFromJson(e))?.toList(),
+      genres: (result['genres'] as List)
+          ?.map((e) => Genre.parserFromJson(e))
+          ?.toList(),
+      countries: (result['production_countries'] as List)
+          ?.map((e) => Country.parserFromJson(e))
+          ?.toList(),
+      companies: (result['production_companies'] as List)
+          ?.map((e) => Company.parserFromJson(e))
+          ?.toList(),
       collection: Collection.parserFromJson(result['belongs_to_collection']),
-      languages: (result['spoken_languages'] as List)?.map((e) => Language.parserFromJson(e))?.toList(),
+      languages: (result['spoken_languages'] as List)
+          ?.map((e) => Language.parserFromJson(e))
+          ?.toList(),
     );
   }
 

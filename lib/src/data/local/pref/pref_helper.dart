@@ -1,3 +1,3 @@
 abstract class PrefHelper {
-  Future<bool> firstRun();
+  Future<bool> isFirstRun();
 }

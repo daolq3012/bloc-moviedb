@@ -18,7 +18,6 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
       try {
         final movies = await movieRepository.fetchMovies(event.type);
         emit(MovieFetched(movies, event.type));
-        return;
       } on Exception catch (e) {
         emit(MovieFetchError(e.toString()));
       }
