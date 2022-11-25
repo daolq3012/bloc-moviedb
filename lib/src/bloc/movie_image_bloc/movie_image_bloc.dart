@@ -8,26 +8,20 @@ class MovieImageBloc extends Bloc<GetMovieImagesEvent, MovieImageState> {
   final MovieRepository movieRepository;
   Connectivity connectivity = Connectivity();
 
-  MovieImageBloc(this.movieRepository) : super(MovieImageInit());
-
-  @override
-  Stream<MovieImageState> mapEventToState(GetMovieImagesEvent event) async* {
-    final connection = await connectivity.checkConnectivity();
-    if (connection == ConnectivityResult.none) {
-      yield GetMovieImagesError('Please check the network connection');
-      return;
-    }
-
-    if (event is GetMovieImagesEvent) {
+  MovieImageBloc(this.movieRepository) : super(MovieImageInit()) {
+    on<GetMovieImagesEvent>((event, emit) async {
+      final connection = await connectivity.checkConnectivity();
+      if (connection == ConnectivityResult.none) {
+        emit(GetMovieImagesError('Please check the network connection'));
+        return;
+      }
       try {
         final images = await movieRepository.getMovieImages(event.movieId);
-        yield GetMovieImagesSuccess(images);
+        emit(GetMovieImagesSuccess(images));
         return;
-      } on Exception catch(e) {
-        yield GetMovieImagesError(e.toString());
+      } on Exception catch (e) {
+        emit(GetMovieImagesError(e.toString()));
       }
-    }
-
-    addError(Exception('Cannot support the event'));
+    });
   }
 }
