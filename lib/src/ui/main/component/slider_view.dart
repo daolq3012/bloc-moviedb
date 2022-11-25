@@ -1,46 +1,53 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_bloc.dart';
-import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_event.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_state.dart';
 import 'package:flutter_bloc_base/src/data/constant/constant.dart';
-import 'package:flutter_bloc_base/src/data/repository/movie_repository_impl.dart';
 import 'package:flutter_bloc_base/src/models/models.dart';
 import 'package:flutter_bloc_base/src/ui/theme/colors.dart';
 import 'package:flutter_bloc_base/src/ui/widget/error_page.dart';
 
-class SliderView extends StatelessWidget {
+import '../../../bloc/movie_bloc/movie_bloc_sp.dart';
+import '../../../bloc/movie_bloc/movie_event.dart';
+import '../../../data/repository/movie_repository_impl.dart';
+
+class SliderView extends StatefulWidget {
   final Function(Movie) actionOpenMovie;
 
   SliderView({Key key, @required this.actionOpenMovie}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        return MovieBloc(MovieRepositoryImpl())
-          ..add(
-            FetchMovieWithType(Constant.nowPlaying),
-          );
-      },
-      child: _createSlider(context),
-    );
+  State<SliderView> createState() => _SliderViewState();
+}
+
+class _SliderViewState extends State<SliderView> {
+  MovieBlocSp movieBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    movieBloc = MovieBlocSp(MovieRepositoryImpl());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      movieBloc.eventController.sink
+          .add(FetchMovieWithType(Constant.nowPlaying));
+    });
   }
 
-  Widget _createSlider(BuildContext context) {
-    return BlocBuilder<MovieBloc, MovieState>(
-      builder: (context, state) {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<MovieState>(
+      stream: movieBloc.stateController.stream,
+      initialData: movieBloc.state,
+      builder: (BuildContext context, AsyncSnapshot<MovieState> snapshot) {
+        var state = snapshot.data;
         if (state is MovieInit) {
           return Center(child: const CircularProgressIndicator());
         } else if (state is MovieFetchError) {
           return ErrorPage(
             message: state.message,
             retry: () {
-              context
-                  .watch<MovieBloc>()
-                  .add(FetchMovieWithType(Constant.nowPlaying));
+              // TODO handle later
             },
           );
         } else if (state is MovieFetched) {
@@ -72,7 +79,7 @@ class SliderView extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        actionOpenMovie(movie);
+        widget.actionOpenMovie(movie);
       },
       child: Container(
         width: width,
