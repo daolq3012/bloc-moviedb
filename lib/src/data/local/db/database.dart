@@ -5,9 +5,11 @@ import 'package:sqflite/sqflite.dart';
 
 class AppDatabase {
   static String get _databaseName => 'app_database.db';
+
   static int get _versionCode => 1;
 
   static Database _database;
+
   Database get database => _database;
 
   static Future<Database> open() async {
@@ -18,7 +20,7 @@ class AppDatabase {
 
   // Please remember close after open
   static Future close() async {
-    _database.close();
+    await _database.close();
   }
 
   /// delete the db, create the folder and return its path
@@ -28,11 +30,7 @@ class AppDatabase {
 
     // make sure the folder exists
     if (!await Directory(dirname(path)).exists()) {
-      try {
-        await Directory(dirname(path)).create(recursive: true);
-      } catch (e) {
-        print(e);
-      }
+      await Directory(dirname(path)).create(recursive: true);
     }
     return path;
   }

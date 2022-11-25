@@ -34,5 +34,14 @@ class Img extends Equatable {
   }
 
   @override
-  List<Object> get props => [aspect, imagePath, width, height, countryCode, voteCount, voteAverage, voteCount];
+  List<Object> get props => [
+        aspect,
+        imagePath,
+        width,
+        height,
+        countryCode,
+        voteCount,
+        voteAverage,
+        voteCount
+      ];
 }

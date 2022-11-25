@@ -15,9 +15,11 @@ class MovieRepositoryImpl extends MovieRepository {
 
   @override
   Future<List<Movie>> fetchMovies(String type) async {
-    final response = await _client.get('https://api.themoviedb.org/3/movie/$type?api_key=$API_KEY');
+    final response = await _client.get(
+        Uri.parse('https://api.themoviedb.org/3/movie/$type?api_key=$API_KEY'));
     if (response.statusCode == 200) {
-      return MovieResponse.parserFromJson(json.decode(response.body))?.movies ?? List.empty();
+      return MovieResponse.parserFromJson(json.decode(response.body))?.movies ??
+          List.empty();
     } else {
       throw Exception('Fail to load movie');
     }
@@ -25,7 +27,8 @@ class MovieRepositoryImpl extends MovieRepository {
 
   @override
   Future<MovieInfo> getMovieInfo(int movieId) async {
-    final response = await _client.get('https://api.themoviedb.org/3/movie/$movieId?api_key=$API_KEY');
+    final response = await _client.get(Uri.parse(
+        'https://api.themoviedb.org/3/movie/$movieId?api_key=$API_KEY'));
     if (response.statusCode == 200) {
       return MovieInfo.parserFromJson(json.decode(response.body));
     } else {
@@ -35,7 +38,8 @@ class MovieRepositoryImpl extends MovieRepository {
 
   @override
   Future<MovieImage> getMovieImages(int movieId) async {
-    final response = await _client.get('https://api.themoviedb.org/3/movie/$movieId/images?api_key=$API_KEY');
+    final response = await _client.get(Uri.parse(
+        'https://api.themoviedb.org/3/movie/$movieId/images?api_key=$API_KEY'));
     if (response.statusCode == 200) {
       return MovieImage.parserFromJson(json.decode(response.body));
     } else {

@@ -21,12 +21,13 @@ class StarRating extends StatelessWidget {
 
   Widget buildStar(BuildContext context, int index) {
     Icon icon;
-    var ratingStarSizeRelativeToScreen = MediaQuery.of(context).size.width / starCount;
+    var ratingStarSizeRelativeToScreen =
+        MediaQuery.of(context).size.width / starCount;
 
     if (index >= rating) {
       icon = Icon(
         Icons.star_border,
-        color: borderColor ?? Theme.of(context).buttonColor,
+        color: borderColor ?? Theme.of(context).primaryColor,
         size: size ?? ratingStarSizeRelativeToScreen,
       );
     } else if (index > rating - 1 && index < rating) {
@@ -45,7 +46,8 @@ class StarRating extends StatelessWidget {
     return InkResponse(
       highlightColor: Colors.transparent,
       radius: (size ?? ratingStarSizeRelativeToScreen) / 2,
-      onTap: onRatingChanged == null ? null : () => onRatingChanged(index + 1.0),
+      onTap:
+          onRatingChanged == null ? null : () => onRatingChanged(index + 1.0),
       child: Container(
         height: (size ?? ratingStarSizeRelativeToScreen) * 1.5,
         child: icon,

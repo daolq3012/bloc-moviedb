@@ -1,17 +1,13 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_bloc_base/src/bloc/blocs.dart';
-import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_event.dart';
-import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_state.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_detail_bloc/movie_detail_event.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_detail_bloc/movie_detail_state.dart';
 import 'package:flutter_bloc_base/src/data/movie_repository.dart';
-import 'package:flutter_bloc_base/src/models/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
 import '../../movie_detail_factory.dart';
-import '../../movie_factory.dart';
 import '../connectivity_mock.dart';
 import '../movie_repository_mock.dart';
 
@@ -40,11 +36,12 @@ void main() {
     blocTest<MovieDetailBloc, MovieDetailState>(
       'emits [] when nothing is added',
       build: () => MovieDetailBloc(movieRepository),
-      expect: const <MovieDetailState>[],
+      expect: () => const <MovieDetailState>[],
     );
 
     final movieId = 1;
-    when(connectivity.checkConnectivity()).thenAnswer((_) async => ConnectivityResult.none);
+    when(connectivity.checkConnectivity())
+        .thenAnswer((_) async => ConnectivityResult.none);
 
     blocTest<MovieDetailBloc, MovieDetailState>(
       'emits [GetMovieDetailError] when GetMovieDetailEvent is added',
@@ -53,7 +50,8 @@ void main() {
         bloc.connectivity = connectivity,
         bloc.add(GetMovieDetailEvent(movieId))
       },
-      expect: [GetMovieDetailError('Please check the network connection')],
+      expect: () =>
+          [GetMovieDetailError('Please check the network connection')],
     );
   });
 
@@ -64,14 +62,15 @@ void main() {
     blocTest<MovieDetailBloc, MovieDetailState>(
       'emits [] when nothing is added',
       build: () => MovieDetailBloc(movieRepository),
-      expect: const <MovieDetailState>[],
+      expect: () => const <MovieDetailState>[],
     );
 
     final movieId = 1;
     final info = createMovieInfo;
 
     when(movieRepository.getMovieInfo(movieId)).thenAnswer((_) async => info);
-    when(connectivity.checkConnectivity()).thenAnswer((_) async => ConnectivityResult.wifi);
+    when(connectivity.checkConnectivity())
+        .thenAnswer((_) async => ConnectivityResult.wifi);
 
     blocTest<MovieDetailBloc, MovieDetailState>(
       'emits [GetMovieDetailSuccess] when GetMovieDetailEvent is added',
@@ -80,7 +79,7 @@ void main() {
         bloc.connectivity = connectivity,
         bloc.add(GetMovieDetailEvent(movieId))
       },
-      expect: [GetMovieDetailSuccess(info)],
+      expect: () => [GetMovieDetailSuccess(info)],
     );
   });
 
@@ -92,7 +91,8 @@ void main() {
     final info = createMovieInfo;
 
     when(movieRepository.getMovieInfo(movieId)).thenAnswer((_) async => info);
-    when(connectivity.checkConnectivity()).thenAnswer((_) async => ConnectivityResult.mobile);
+    when(connectivity.checkConnectivity())
+        .thenAnswer((_) async => ConnectivityResult.mobile);
 
     blocTest<MovieDetailBloc, MovieDetailState>(
       'emits [GetMovieDetailSuccess] when GetMovieDetailEvent is added',
@@ -101,7 +101,7 @@ void main() {
         bloc.connectivity = connectivity,
         bloc.add(GetMovieDetailEvent(movieId))
       },
-      expect: [GetMovieDetailSuccess(info)],
+      expect: () => [GetMovieDetailSuccess(info)],
     );
   });
 
@@ -113,7 +113,8 @@ void main() {
     final exception = Exception('Error');
 
     when(movieRepository.getMovieInfo(movieId)).thenThrow(exception);
-    when(connectivity.checkConnectivity()).thenAnswer((_) async => ConnectivityResult.mobile);
+    when(connectivity.checkConnectivity())
+        .thenAnswer((_) async => ConnectivityResult.mobile);
 
     blocTest<MovieDetailBloc, MovieDetailState>(
       'emits [GetMovieDetailSuccess] when GetMovieDetailEvent is added',
@@ -122,7 +123,7 @@ void main() {
         bloc.connectivity = connectivity,
         bloc.add(GetMovieDetailEvent(movieId))
       },
-      expect: [GetMovieDetailError(exception.toString())],
+      expect: () => [GetMovieDetailError(exception.toString())],
     );
   });
 }

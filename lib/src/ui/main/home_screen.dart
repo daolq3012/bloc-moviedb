@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc_base/src/models/models.dart';
 import 'package:flutter_bloc_base/src/ui/detail/detail_screen.dart';
@@ -10,7 +9,8 @@ class HomeScreen extends StatefulWidget {
   State<StatefulWidget> createState() => HomeState();
 }
 
-class HomeState extends State<HomeScreen> implements AutomaticKeepAliveClientMixin<HomeScreen> {
+class HomeState extends State<HomeScreen>
+    implements AutomaticKeepAliveClientMixin<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +51,8 @@ class HomeState extends State<HomeScreen> implements AutomaticKeepAliveClientMix
       builder: (BuildContext context, BoxConstraints viewportConstraints) {
         return SingleChildScrollView(
           child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
+            constraints:
+                BoxConstraints(minHeight: viewportConstraints.maxHeight),
             child: Container(
               child: Column(
                 children: [

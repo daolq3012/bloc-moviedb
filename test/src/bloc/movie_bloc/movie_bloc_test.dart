@@ -37,11 +37,12 @@ void main() {
     blocTest<MovieBloc, MovieState>(
       'emits [] when nothing is added',
       build: () => MovieBloc(movieRepository),
-      expect: const <MovieState>[],
+      expect: () => const <MovieState>[],
     );
 
     final type = 'type';
-    when(connectivity.checkConnectivity()).thenAnswer((_) async => ConnectivityResult.none);
+    when(connectivity.checkConnectivity())
+        .thenAnswer((_) async => ConnectivityResult.none);
 
     blocTest<MovieBloc, MovieState>(
       'emits [MovieFetchError] when FetchMovieWithType is added',
@@ -50,7 +51,8 @@ void main() {
         bloc.connectivity = connectivity,
         bloc.add(FetchMovieWithType(type))
       },
-      expect: <MovieState>[MovieFetchError('Please check the network connection')],
+      expect: () =>
+          <MovieState>[MovieFetchError('Please check the network connection')],
     );
   });
 
@@ -61,14 +63,15 @@ void main() {
     blocTest<MovieBloc, MovieState>(
       'emits [] when nothing is added',
       build: () => MovieBloc(movieRepository),
-      expect: const <MovieState>[],
+      expect: () => const <MovieState>[],
     );
 
     final type = 'type';
     final movies = List<Movie>.from([createMovie]);
 
     when(movieRepository.fetchMovies(type)).thenAnswer((_) async => movies);
-    when(connectivity.checkConnectivity()).thenAnswer((_) async => ConnectivityResult.wifi);
+    when(connectivity.checkConnectivity())
+        .thenAnswer((_) async => ConnectivityResult.wifi);
 
     blocTest<MovieBloc, MovieState>(
       'emits [MovieFetched] when FetchMovieWithType is added',
@@ -77,7 +80,7 @@ void main() {
         bloc.connectivity = connectivity,
         bloc.add(FetchMovieWithType(type))
       },
-      expect: <MovieState>[MovieFetched(movies, type)],
+      expect: () => <MovieState>[MovieFetched(movies, type)],
     );
   });
 
@@ -89,7 +92,8 @@ void main() {
     final movies = List<Movie>.from([createMovie]);
 
     when(movieRepository.fetchMovies(type)).thenAnswer((_) async => movies);
-    when(connectivity.checkConnectivity()).thenAnswer((_) async => ConnectivityResult.mobile);
+    when(connectivity.checkConnectivity())
+        .thenAnswer((_) async => ConnectivityResult.mobile);
 
     blocTest<MovieBloc, MovieState>(
       'emits [MovieFetched] when FetchMovieWithType is added',
@@ -98,10 +102,9 @@ void main() {
         bloc.connectivity = connectivity,
         bloc.add(FetchMovieWithType(type))
       },
-      expect: <MovieState>[MovieFetched(movies, type)],
+      expect: () => <MovieState>[MovieFetched(movies, type)],
     );
   });
-
 
   group('Test Fetch Movie with has internet and repository return [error]', () {
     final MovieRepository movieRepository = MovieRepositoryMock();
@@ -112,7 +115,8 @@ void main() {
     final exception = Exception(message);
 
     when(movieRepository.fetchMovies(type)).thenThrow(exception);
-    when(connectivity.checkConnectivity()).thenAnswer((_) async => ConnectivityResult.wifi);
+    when(connectivity.checkConnectivity())
+        .thenAnswer((_) async => ConnectivityResult.wifi);
 
     blocTest<MovieBloc, MovieState>(
       'emits [MovieFetched] when FetchMovieWithType is added',
@@ -121,7 +125,7 @@ void main() {
         bloc.connectivity = connectivity,
         bloc.add(FetchMovieWithType(type))
       },
-      expect: <MovieState>[MovieFetchError(exception.toString())],
+      expect: () => <MovieState>[MovieFetchError(exception.toString())],
     );
   });
 }

@@ -3,32 +3,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_event.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_state.dart';
 import 'package:flutter_bloc_base/src/data/movie_repository.dart';
-import 'package:flutter_bloc_base/src/data/repository/movie_repository_impl.dart';
 
 class MovieBloc extends Bloc<MovieEvent, MovieState> {
   final MovieRepository movieRepository;
   Connectivity connectivity = Connectivity();
 
-  MovieBloc(this.movieRepository) : super(MovieInit());
-
-  @override
-  Stream<MovieState> mapEventToState(MovieEvent event) async* {
-    final connectResult = await connectivity.checkConnectivity();
-    if (connectResult == ConnectivityResult.none) {
-      yield MovieFetchError('Please check the network connection');
-      return;
-    }
-
-    if (event is FetchMovieWithType) {
+  MovieBloc(this.movieRepository) : super(MovieInit()) {
+    on<FetchMovieWithType>((event, emit) async {
+      final connectResult = await connectivity.checkConnectivity();
+      if (connectResult == ConnectivityResult.none) {
+        emit(MovieFetchError('Please check the network connection'));
+        return;
+      }
       try {
         final movies = await movieRepository.fetchMovies(event.type);
-        yield MovieFetched(movies, event.type);
-        return;
-      } on Exception catch(e) {
-        yield MovieFetchError(e.toString());
+        emit(MovieFetched(movies, event.type));
+      } on Exception catch (e) {
+        emit(MovieFetchError(e.toString()));
       }
-    }
-
-    addError(Exception('Cannot support the event'));
+    });
   }
 }

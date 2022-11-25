@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-abstract class MovieEvent extends Equatable {
-}
+abstract class MovieEvent extends Equatable {}
 
 class FetchMovieWithType extends MovieEvent {
   final String type;

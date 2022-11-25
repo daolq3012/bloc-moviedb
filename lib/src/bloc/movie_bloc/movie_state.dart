@@ -11,6 +11,7 @@ class MovieInit extends MovieState {}
 class MovieFetched extends MovieState {
   final List<Movie> movies;
   final String type;
+
   MovieFetched(this.movies, this.type);
 
   @override
@@ -19,6 +20,7 @@ class MovieFetched extends MovieState {
 
 class MovieFetchError extends MovieState {
   final String message;
+
   MovieFetchError(this.message);
 
   @override
