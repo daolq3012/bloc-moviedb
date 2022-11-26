@@ -1,43 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_base/src/bloc/blocs.dart';
-import 'package:flutter_bloc_base/src/bloc/movie_detail_bloc/movie_detail_event.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_detail_bloc/movie_detail_state.dart';
 import 'package:flutter_bloc_base/src/data/repository/movie_repository_impl.dart';
 import 'package:flutter_bloc_base/src/models/models.dart';
-import 'package:flutter_bloc_base/src/ui/detail/cubit/expand_cubit.dart';
 import 'package:flutter_bloc_base/src/ui/widget/error_page.dart';
 import 'package:flutter_bloc_base/src/ui/widget/star_rating.dart';
 import 'package:flutter_gen/gen_l10n/resource.dart';
 
-class MovieInfoView extends StatelessWidget {
+class MovieInfoView extends StatefulWidget {
   final Movie movie;
 
   const MovieInfoView({Key key, this.movie}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-            create: (_) => MovieDetailBloc(MovieRepositoryImpl())
-              ..add(GetMovieDetailEvent(movie.id))),
-        BlocProvider(create: (_) => ExpandCubit()),
-      ],
-      child: _createMovieInfo(context),
-    );
+  State<MovieInfoView> createState() => _MovieInfoViewState();
+}
+
+class _MovieInfoViewState extends State<MovieInfoView> {
+  MovieDetailBloc _movieDetailBloc;
+  final ValueNotifier<bool> _expandDescription = ValueNotifier(false);
+
+  @override
+  void initState() {
+    super.initState();
+    _movieDetailBloc = MovieDetailBloc(MovieRepositoryImpl());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _movieDetailBloc.fetchMovieDetail(widget.movie.id);
+    });
   }
 
-  Widget _createMovieInfo(BuildContext context) {
-    return BlocBuilder<MovieDetailBloc, MovieDetailState>(
-      builder: (context, state) {
+  @override
+  void dispose() {
+    _movieDetailBloc.dispose();
+    _expandDescription.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<MovieDetailState>(
+      stream: _movieDetailBloc.stateController.stream,
+      initialData: MovieDetailInit(),
+      builder: (context, snapshot) {
+        var state = snapshot.data;
         if (state is GetMovieDetailError) {
           return ErrorPage(
             message: state.msg,
             retry: () {
-              context
-                  .watch<MovieDetailBloc>()
-                  .add(GetMovieDetailEvent(movie.id));
+              _movieDetailBloc.fetchMovieDetail(widget.movie.id);
             },
           );
         } else if (state is GetMovieDetailSuccess) {
@@ -171,29 +182,30 @@ class MovieInfoView extends StatelessWidget {
   }
 
   Widget _createMovieOverview(BuildContext context, String overview) {
-    return BlocBuilder<ExpandCubit, bool>(
-      builder: (context, state) {
-        return InkWell(
-          onTap: () {
-            context.read<ExpandCubit>().toggle();
-          },
-          child: Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(left: 24.0, right: 24.0, top: 8.0),
-            child: Text(
+    return InkWell(
+      onTap: () {
+        _expandDescription.value = !_expandDescription.value;
+      },
+      child: Container(
+        alignment: Alignment.center,
+        margin: EdgeInsets.only(left: 24.0, right: 24.0, top: 8.0),
+        child: ValueListenableBuilder(
+          valueListenable: _expandDescription,
+          builder: (BuildContext context, bool value, Widget child) {
+            return Text(
               overview,
               textAlign: TextAlign.justify,
-              maxLines: state ? 100 : 5,
+              maxLines: value ? 100 : 5,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 14.0,
                 color: Colors.black45,
                 fontFamily: 'Muli',
               ),
-            ),
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ),
     );
   }
 }
