@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc_base/src/bloc/blocs.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_detail_bloc/movie_detail_state.dart';
 import 'package:flutter_bloc_base/src/data/repository/movie_repository_impl.dart';
 import 'package:flutter_bloc_base/src/models/models.dart';
 import 'package:flutter_bloc_base/src/ui/widget/error_page.dart';
 import 'package:flutter_bloc_base/src/ui/widget/star_rating.dart';
 import 'package:flutter_gen/gen_l10n/resource.dart';
+
+import '../../../bloc/movie_detail_bloc/movie_detail_bloc.dart';
 
 class MovieInfoView extends StatefulWidget {
   final Movie movie;

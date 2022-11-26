@@ -1,19 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_bloc.dart';
-import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_event.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_image_bloc/movie_image_bloc.dart';
-import 'package:flutter_bloc_base/src/bloc/movie_image_bloc/movie_image_event.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_image_bloc/movie_image_state.dart';
-import 'package:flutter_bloc_base/src/data/constant/constant.dart';
 import 'package:flutter_bloc_base/src/data/repository/movie_repository_impl.dart';
 import 'package:flutter_bloc_base/src/models/models.dart';
 import 'package:flutter_bloc_base/src/ui/theme/colors.dart';
 import 'package:flutter_bloc_base/src/ui/widget/error_page.dart';
 import 'package:flutter_gen/gen_l10n/resource.dart';
 
-class ScreenshotView extends StatelessWidget {
+class ScreenshotView extends StatefulWidget {
   final int movieId;
   final Function(Img) actionOpenImage;
   final Function actionLoadAll;
@@ -26,30 +21,41 @@ class ScreenshotView extends StatelessWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        return MovieImageBloc(MovieRepositoryImpl())
-          ..add(
-            GetMovieImagesEvent(movieId),
-          );
-      },
-      child: _createScreenshot(context),
-    );
+  State<ScreenshotView> createState() => _ScreenshotViewState();
+}
+
+class _ScreenshotViewState extends State<ScreenshotView> {
+  MovieImageBloc _movieImageBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _movieImageBloc = MovieImageBloc(MovieRepositoryImpl());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _movieImageBloc.getMovieImage(widget.movieId);
+    });
   }
 
-  Widget _createScreenshot(BuildContext context) {
-    return BlocBuilder<MovieImageBloc, MovieImageState>(
-      builder: (context, state) {
+  @override
+  void dispose() {
+    _movieImageBloc.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<MovieImageState>(
+      stream: _movieImageBloc.stateController.stream,
+      initialData: MovieImageInit(),
+      builder: (context, snapshot) {
+        var state = snapshot.data;
         if (state is MovieImageInit) {
           return Center(child: const CircularProgressIndicator());
         } else if (state is GetMovieImagesError) {
           return ErrorPage(
             message: state.msg,
             retry: () {
-              // context
-              //     .watch<MovieBloc>()
-              //     .add(FetchMovieWithType(Constant.topRated));
+              // TODO implement later
             },
           );
         } else if (state is GetMovieImagesSuccess) {
@@ -87,7 +93,7 @@ class ScreenshotView extends StatelessWidget {
                 IconButton(
                   icon: Icon(Icons.arrow_forward, color: groupTitleColor),
                   onPressed: () {
-                    return actionLoadAll;
+                    return widget.actionLoadAll;
                   },
                 )
               ],
@@ -117,7 +123,7 @@ class ScreenshotView extends StatelessWidget {
     final width = MediaQuery.of(context).size.width / 2.4;
     return InkWell(
       onTap: () {
-        actionOpenImage(img);
+        widget.actionOpenImage(img);
       },
       child: Container(
         width: width,
