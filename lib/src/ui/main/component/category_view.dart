@@ -1,44 +1,55 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_bloc.dart';
-import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_event.dart';
+import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_bloc_sp.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_state.dart';
-import 'package:flutter_bloc_base/src/data/constant/constant.dart';
 import 'package:flutter_bloc_base/src/data/repository/movie_repository_impl.dart';
 import 'package:flutter_bloc_base/src/models/models.dart';
 import 'package:flutter_bloc_base/src/ui/theme/colors.dart';
 import 'package:flutter_bloc_base/src/ui/widget/error_page.dart';
 import 'package:flutter_gen/gen_l10n/resource.dart';
 
-class CategoryView extends StatelessWidget {
+class CategoryView extends StatefulWidget {
   final Function(Movie) actionOpenCategory;
 
   CategoryView({Key key, @required this.actionOpenCategory}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        return MovieBloc(MovieRepositoryImpl())
-          ..add(FetchMovieWithType(Constant.upcoming));
-      },
-      child: _createCategory(context),
-    );
+  State<CategoryView> createState() => _CategoryViewState();
+}
+
+class _CategoryViewState extends State<CategoryView> {
+  MovieBlocSp _movieBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _movieBloc = MovieBlocSp(MovieRepositoryImpl());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _movieBloc.fetchMovieUpComing();
+    });
   }
 
-  Widget _createCategory(BuildContext context) {
-    return BlocBuilder<MovieBloc, MovieState>(
-      builder: (context, state) {
+  @override
+  void dispose() {
+    _movieBloc.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<MovieState>(
+      stream: _movieBloc.stateController.stream,
+      initialData: _movieBloc.state,
+      builder: (BuildContext context, AsyncSnapshot<MovieState> snapshot) {
+        var state = snapshot.data;
         if (state is MovieStateInit) {
           return Center(child: const CircularProgressIndicator());
         } else if (state is MovieFetchError) {
           return ErrorPage(
             message: state.message,
             retry: () {
-              context
-                  .watch<MovieBloc>()
-                  .add(FetchMovieWithType(Constant.upcoming));
+              _movieBloc.fetchMovieUpComing();
             },
           );
         } else if (state is MovieFetched) {
@@ -74,7 +85,7 @@ class CategoryView extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        actionOpenCategory(movie);
+        widget.actionOpenCategory(movie);
       },
       child: Container(
         width: width,
