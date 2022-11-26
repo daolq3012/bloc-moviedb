@@ -1,5 +1,5 @@
 name: flutter_bloc_base
-description: Flutter application with Bloc Architecture
+description: Flutter application
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -20,7 +20,6 @@ dependencies:
   intl: ^0.17.0-nullsafety.2
 
   cupertino_icons: ^1.0.1
-  flutter_bloc: ^8.1.0
   shared_preferences: ^2.0.15
   sqflite: ^2.2.0+3
   permission_handler: ^10.2.0
@@ -34,9 +33,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  bloc_test: ^9.1.0
-  mockito: ^5.2.0
-#  integration_test: ^1.0.0
   json_serializable: ^6.5.4
   build_runner: ^2.0.0
 
