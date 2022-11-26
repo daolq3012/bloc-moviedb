@@ -1,24 +1,20 @@
 import 'dart:async';
 
 abstract class BaseBloc<Event, State> {
+  BaseBloc(this.state);
+
   State state;
 
-  BaseBloc(State initialState): state = initialState;
+  final _eventController = StreamController<Event>();
 
-  StreamController<Event> provideEventController();
+  final _stateController = StreamController<State>();
 
-  StreamController<State> provideStateController();
+  StreamController<Event> get eventController => _eventController;
 
-  StreamController<Event> get eventController {
-    return provideEventController();
-  }
-
-  StreamController<State> get stateController {
-    return provideStateController();
-  }
+  StreamController<State> get stateController => _stateController;
 
   void dispose() {
-    stateController.close();
-    eventController.close();
+    _stateController.close();
+    _eventController.close();
   }
 }

@@ -1,8 +1,8 @@
-import 'dart:async';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_bloc_base/src/bloc/base_bloc.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_event.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_state.dart';
+import 'package:flutter_bloc_base/src/data/constant/constant.dart';
 
 import '../../data/movie_repository.dart';
 
@@ -11,10 +11,8 @@ class MovieBlocSp extends BaseBloc<MovieEvent, MovieState> {
 
   final Connectivity connectivity = Connectivity();
 
-  MovieBlocSp(this.movieRepository) : super(MovieInit()) {
+  MovieBlocSp(this.movieRepository) : super(MovieStateInit()) {
     eventController.stream.listen((MovieEvent event) async {
-      // người ta thường tách hàm này ra 1 hàm riêng và đặt tên là: mapEventToState
-      // đúng như cái tên, hàm này nhận event xử lý và cho ra output là state
 
       if (event is FetchMovieWithType) {
         try {
@@ -35,13 +33,7 @@ class MovieBlocSp extends BaseBloc<MovieEvent, MovieState> {
     });
   }
 
-  @override
-  StreamController<MovieEvent> provideEventController() {
-    return StreamController<MovieEvent>();
-  }
-
-  @override
-  StreamController<MovieState> provideStateController() {
-    return StreamController<MovieState>();
+  void fetchMovieNowPlaying() {
+    eventController.sink.add(FetchMovieWithType(Constant.nowPlaying));
   }
 }

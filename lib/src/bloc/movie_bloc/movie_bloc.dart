@@ -8,7 +8,7 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
   final MovieRepository movieRepository;
   Connectivity connectivity = Connectivity();
 
-  MovieBloc(this.movieRepository) : super(MovieInit()) {
+  MovieBloc(this.movieRepository) : super(MovieStateInit()) {
     on<FetchMovieWithType>((event, emit) async {
       final connectResult = await connectivity.checkConnectivity();
       if (connectResult == ConnectivityResult.none) {

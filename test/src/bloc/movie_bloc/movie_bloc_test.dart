@@ -22,7 +22,7 @@ void main() {
     });
 
     test('Test default init', () {
-      expect(movieBloc.state, MovieInit());
+      expect(movieBloc.state, MovieStateInit());
     });
 
     tearDown(() {

@@ -2,13 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_state.dart';
-import 'package:flutter_bloc_base/src/data/constant/constant.dart';
 import 'package:flutter_bloc_base/src/models/models.dart';
 import 'package:flutter_bloc_base/src/ui/theme/colors.dart';
 import 'package:flutter_bloc_base/src/ui/widget/error_page.dart';
 
 import '../../../bloc/movie_bloc/movie_bloc_sp.dart';
-import '../../../bloc/movie_bloc/movie_event.dart';
 import '../../../data/repository/movie_repository_impl.dart';
 
 class SliderView extends StatefulWidget {
@@ -29,25 +27,30 @@ class _SliderViewState extends State<SliderView> {
     movieBloc = MovieBlocSp(MovieRepositoryImpl());
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      movieBloc.eventController.sink
-          .add(FetchMovieWithType(Constant.nowPlaying));
+      movieBloc.fetchMovieNowPlaying();
     });
+  }
+
+  @override
+  void dispose() {
+    movieBloc.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<MovieState>(
       stream: movieBloc.stateController.stream,
-      initialData: movieBloc.state,
+      initialData: MovieStateInit(),
       builder: (BuildContext context, AsyncSnapshot<MovieState> snapshot) {
         var state = snapshot.data;
-        if (state is MovieInit) {
+        if (state is MovieStateInit) {
           return Center(child: const CircularProgressIndicator());
         } else if (state is MovieFetchError) {
           return ErrorPage(
             message: state.message,
             retry: () {
-              // TODO handle later
+              movieBloc.fetchMovieNowPlaying();
             },
           );
         } else if (state is MovieFetched) {

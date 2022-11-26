@@ -35,7 +35,7 @@ class MyListView extends StatelessWidget {
   Widget _createMyList(BuildContext context) {
     return BlocBuilder<MovieBloc, MovieState>(
       builder: (context, state) {
-        if (state is MovieInit) {
+        if (state is MovieStateInit) {
           return Center(child: const CircularProgressIndicator());
         } else if (state is MovieFetchError) {
           return ErrorPage(
