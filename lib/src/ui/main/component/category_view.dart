@@ -1,12 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_bloc_sp.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_state.dart';
 import 'package:flutter_bloc_base/src/data/repository/movie_repository_impl.dart';
 import 'package:flutter_bloc_base/src/models/models.dart';
 import 'package:flutter_bloc_base/src/ui/theme/colors.dart';
 import 'package:flutter_bloc_base/src/ui/widget/error_page.dart';
 import 'package:flutter_gen/gen_l10n/resource.dart';
+
+import '../../../bloc/movie_bloc/movie_bloc.dart';
 
 class CategoryView extends StatefulWidget {
   final Function(Movie) actionOpenCategory;
@@ -18,12 +19,12 @@ class CategoryView extends StatefulWidget {
 }
 
 class _CategoryViewState extends State<CategoryView> {
-  MovieBlocSp _movieBloc;
+  MovieBloc _movieBloc;
 
   @override
   void initState() {
     super.initState();
-    _movieBloc = MovieBlocSp(MovieRepositoryImpl());
+    _movieBloc = MovieBloc(MovieRepositoryImpl());
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _movieBloc.fetchMovieUpComing();

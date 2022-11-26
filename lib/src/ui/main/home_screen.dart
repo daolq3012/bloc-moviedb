@@ -62,25 +62,25 @@ class HomeState extends State<HomeScreen>
                     },
                   ),
                   Divider(height: 4.0, color: Colors.transparent),
-                  CategoryView(
-                    actionOpenCategory: (movie) {
-                      _openMovieDetail(movie);
-                    },
-                  ),
-                  Divider(height: 8.0, color: Colors.transparent),
-                  MyListView(
-                    actionOpenMovie: (movie) {
-                      _openMovieDetail(movie);
-                    },
-                    actionLoadAll: () {},
-                  ),
-                  Divider(height: 8.0, color: Colors.transparent),
-                  PopularView(
-                    actionOpenMovie: (movie) {
-                      _openMovieDetail(movie);
-                    },
-                    actionLoadAll: () {},
-                  ),
+                  // CategoryView(
+                  //   actionOpenCategory: (movie) {
+                  //     _openMovieDetail(movie);
+                  //   },
+                  // ),
+                  // Divider(height: 8.0, color: Colors.transparent),
+                  // MyListView(
+                  //   actionOpenMovie: (movie) {
+                  //     _openMovieDetail(movie);
+                  //   },
+                  //   actionLoadAll: () {},
+                  // ),
+                  // Divider(height: 8.0, color: Colors.transparent),
+                  // PopularView(
+                  //   actionOpenMovie: (movie) {
+                  //     _openMovieDetail(movie);
+                  //   },
+                  //   actionLoadAll: () {},
+                  // ),
                 ],
               ),
             ),

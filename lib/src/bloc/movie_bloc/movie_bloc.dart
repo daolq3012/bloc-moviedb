@@ -1,26 +1,51 @@
 import 'package:connectivity/connectivity.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc_base/src/bloc/base_bloc.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_event.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_state.dart';
-import 'package:flutter_bloc_base/src/data/movie_repository.dart';
+import 'package:flutter_bloc_base/src/data/constant/constant.dart';
 
-class MovieBloc extends Bloc<MovieEvent, MovieState> {
+import '../../data/movie_repository.dart';
+
+class MovieBloc extends BaseBloc<MovieEvent, MovieState> {
   final MovieRepository movieRepository;
-  Connectivity connectivity = Connectivity();
+
+  final Connectivity connectivity = Connectivity();
 
   MovieBloc(this.movieRepository) : super(MovieStateInit()) {
-    on<FetchMovieWithType>((event, emit) async {
+    eventController.stream.listen((MovieEvent event) async {
+
+      if (event is FetchMovieWithType) {
+        try {
+          final movies = await movieRepository.fetchMovies(event.type);
+          state = MovieFetched(movies, event.type);
+        } on Exception catch (e) {
+          state = MovieFetchError(e.toString());
+        }
+      }
+
       final connectResult = await connectivity.checkConnectivity();
       if (connectResult == ConnectivityResult.none) {
-        emit(MovieFetchError('Please check the network connection'));
-        return;
+        state = MovieFetchError('Please check the network connection');
       }
-      try {
-        final movies = await movieRepository.fetchMovies(event.type);
-        emit(MovieFetched(movies, event.type));
-      } on Exception catch (e) {
-        emit(MovieFetchError(e.toString()));
-      }
+
+      // add state mới vào stateController để bên UI nhận được
+      stateController.sink.add(state);
     });
+  }
+
+  void fetchMovieNowPlaying() {
+    eventController.sink.add(FetchMovieWithType(Constant.nowPlaying));
+  }
+
+  void fetchMovieUpComing() {
+    eventController.sink.add(FetchMovieWithType(Constant.upcoming));
+  }
+
+  void fetchMovieTopRate() {
+    eventController.sink.add(FetchMovieWithType(Constant.topRated));
+  }
+
+  void fetchMoviePopular() {
+    eventController.sink.add(FetchMovieWithType(Constant.popular));
   }
 }

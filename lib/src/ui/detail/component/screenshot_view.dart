@@ -47,9 +47,9 @@ class ScreenshotView extends StatelessWidget {
           return ErrorPage(
             message: state.msg,
             retry: () {
-              context
-                  .watch<MovieBloc>()
-                  .add(FetchMovieWithType(Constant.topRated));
+              // context
+              //     .watch<MovieBloc>()
+              //     .add(FetchMovieWithType(Constant.topRated));
             },
           );
         } else if (state is GetMovieImagesSuccess) {

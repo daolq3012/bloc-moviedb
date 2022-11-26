@@ -6,7 +6,7 @@ import 'package:flutter_bloc_base/src/models/models.dart';
 import 'package:flutter_bloc_base/src/ui/theme/colors.dart';
 import 'package:flutter_bloc_base/src/ui/widget/error_page.dart';
 
-import '../../../bloc/movie_bloc/movie_bloc_sp.dart';
+import '../../../bloc/movie_bloc/movie_bloc.dart';
 import '../../../data/repository/movie_repository_impl.dart';
 
 class SliderView extends StatefulWidget {
@@ -19,12 +19,12 @@ class SliderView extends StatefulWidget {
 }
 
 class _SliderViewState extends State<SliderView> {
-  MovieBlocSp movieBloc;
+  MovieBloc movieBloc;
 
   @override
   void initState() {
     super.initState();
-    movieBloc = MovieBlocSp(MovieRepositoryImpl());
+    movieBloc = MovieBloc(MovieRepositoryImpl());
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       movieBloc.fetchMovieNowPlaying();
