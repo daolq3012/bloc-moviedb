@@ -1,17 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_bloc.dart';
-import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_event.dart';
 import 'package:flutter_bloc_base/src/bloc/movie_bloc/movie_state.dart';
-import 'package:flutter_bloc_base/src/data/constant/constant.dart';
 import 'package:flutter_bloc_base/src/data/repository/movie_repository_impl.dart';
 import 'package:flutter_bloc_base/src/models/models.dart';
 import 'package:flutter_bloc_base/src/ui/theme/colors.dart';
 import 'package:flutter_bloc_base/src/ui/widget/error_page.dart';
 import 'package:flutter_gen/gen_l10n/resource.dart';
 
-class MyListView extends StatelessWidget {
+import '../../../bloc/movie_bloc/movie_bloc_sp.dart';
+
+class MyListView extends StatefulWidget {
   final Function(Movie) actionOpenMovie;
   final Function actionLoadAll;
 
@@ -20,30 +18,41 @@ class MyListView extends StatelessWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        return MovieBloc(MovieRepositoryImpl())
-          ..add(
-            FetchMovieWithType(Constant.topRated),
-          );
-      },
-      child: _createMyList(context),
-    );
+  State<MyListView> createState() => _MyListViewState();
+}
+
+class _MyListViewState extends State<MyListView> {
+  MovieBlocSp _movieBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _movieBloc = MovieBlocSp(MovieRepositoryImpl());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _movieBloc.fetchMovieTopRate();
+    });
   }
 
-  Widget _createMyList(BuildContext context) {
-    return BlocBuilder<MovieBloc, MovieState>(
-      builder: (context, state) {
+  @override
+  void dispose() {
+    _movieBloc.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<MovieState>(
+      stream: _movieBloc.stateController.stream,
+      initialData: MovieStateInit(),
+      builder: (context, snapshot) {
+        var state = snapshot.data;
         if (state is MovieStateInit) {
           return Center(child: const CircularProgressIndicator());
         } else if (state is MovieFetchError) {
           return ErrorPage(
             message: state.message,
             retry: () {
-              context
-                  .watch<MovieBloc>()
-                  .add(FetchMovieWithType(Constant.topRated));
+              _movieBloc.fetchMovieTopRate();
             },
           );
         } else if (state is MovieFetched) {
@@ -81,7 +90,7 @@ class MyListView extends StatelessWidget {
                 IconButton(
                   icon: Icon(Icons.arrow_forward, color: groupTitleColor),
                   onPressed: () {
-                    return actionLoadAll;
+                    return widget.actionLoadAll;
                   },
                 )
               ],
@@ -111,7 +120,7 @@ class MyListView extends StatelessWidget {
     final width = MediaQuery.of(context).size.width / 2.6;
     return InkWell(
       onTap: () {
-        actionOpenMovie(movie);
+        widget.actionOpenMovie(movie);
       },
       child: Container(
         width: width,

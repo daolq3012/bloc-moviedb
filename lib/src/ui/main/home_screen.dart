@@ -68,19 +68,19 @@ class HomeState extends State<HomeScreen>
                     },
                   ),
                   Divider(height: 8.0, color: Colors.transparent),
-                  // MyListView(
-                  //   actionOpenMovie: (movie) {
-                  //     _openMovieDetail(movie);
-                  //   },
-                  //   actionLoadAll: () {},
-                  // ),
-                  // Divider(height: 8.0, color: Colors.transparent),
-                  // PopularView(
-                  //   actionOpenMovie: (movie) {
-                  //     _openMovieDetail(movie);
-                  //   },
-                  //   actionLoadAll: () {},
-                  // ),
+                  MyListView(
+                    actionOpenMovie: (movie) {
+                      _openMovieDetail(movie);
+                    },
+                    actionLoadAll: () {},
+                  ),
+                  Divider(height: 8.0, color: Colors.transparent),
+                  PopularView(
+                    actionOpenMovie: (movie) {
+                      _openMovieDetail(movie);
+                    },
+                    actionLoadAll: () {},
+                  ),
                 ],
               ),
             ),

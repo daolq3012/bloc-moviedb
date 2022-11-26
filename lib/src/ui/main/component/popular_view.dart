@@ -11,7 +11,9 @@ import 'package:flutter_bloc_base/src/ui/theme/colors.dart';
 import 'package:flutter_bloc_base/src/ui/widget/error_page.dart';
 import 'package:flutter_gen/gen_l10n/resource.dart';
 
-class PopularView extends StatelessWidget {
+import '../../../bloc/movie_bloc/movie_bloc_sp.dart';
+
+class PopularView extends StatefulWidget {
   final Function(Movie) actionOpenMovie;
   final Function actionLoadAll;
 
@@ -20,39 +22,49 @@ class PopularView extends StatelessWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        return MovieBloc(MovieRepositoryImpl())
-          ..add(
-            FetchMovieWithType(Constant.popular),
-          );
-      },
-      child: _createPopular(context),
-    );
+  State<PopularView> createState() => _PopularViewState();
+}
+
+class _PopularViewState extends State<PopularView> {
+  MovieBlocSp _movieBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _movieBloc = MovieBlocSp(MovieRepositoryImpl());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _movieBloc.fetchMoviePopular();
+    });
   }
 
-  Widget _createPopular(BuildContext context) {
-    return BlocBuilder<MovieBloc, MovieState>(
-      builder: (context, state) {
-        if (state is MovieStateInit) {
-          return Center(child: const CircularProgressIndicator());
-        } else if (state is MovieFetchError) {
-          return ErrorPage(
-            message: state.message,
-            retry: () {
-              context
-                  .watch<MovieBloc>()
-                  .add(FetchMovieWithType(Constant.popular));
-            },
-          );
-        } else if (state is MovieFetched) {
-          return _createPopularView(context, state.movies);
-        } else {
-          return Text(AppLocalizations.of(context).cannotSupport);
-        }
-      },
-    );
+  @override
+  void dispose() {
+    _movieBloc.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+        stream: _movieBloc.stateController.stream,
+        initialData: MovieStateInit(),
+        builder: (context, snapshot) {
+          var state = snapshot.data;
+          if (state is MovieStateInit) {
+            return Center(child: const CircularProgressIndicator());
+          } else if (state is MovieFetchError) {
+            return ErrorPage(
+              message: state.message,
+              retry: () {
+                _movieBloc.fetchMoviePopular();
+              },
+            );
+          } else if (state is MovieFetched) {
+            return _createPopularView(context, state.movies);
+          } else {
+            return Text(AppLocalizations.of(context).cannotSupport);
+          }
+        });
   }
 
   Widget _createPopularView(BuildContext context, List<Movie> movies) {
@@ -109,7 +121,7 @@ class PopularView extends StatelessWidget {
     final width = MediaQuery.of(context).size.width / 2.6;
     return InkWell(
       onTap: () {
-        actionOpenMovie(movie);
+        widget.actionOpenMovie(movie);
       },
       child: Container(
         width: width,

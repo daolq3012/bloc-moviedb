@@ -6,7 +6,7 @@ class Movie extends Equatable {
   final bool video;
   final double voteAverage;
   final String title;
-  final double popularity;
+  final num popularity;
   final String posterPath;
   final String originalLanguage;
   final String originalTitle;

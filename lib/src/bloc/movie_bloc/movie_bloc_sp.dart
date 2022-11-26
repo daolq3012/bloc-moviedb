@@ -40,4 +40,12 @@ class MovieBlocSp extends BaseBloc<MovieEvent, MovieState> {
   void fetchMovieUpComing() {
     eventController.sink.add(FetchMovieWithType(Constant.upcoming));
   }
+
+  void fetchMovieTopRate() {
+    eventController.sink.add(FetchMovieWithType(Constant.topRated));
+  }
+
+  void fetchMoviePopular() {
+    eventController.sink.add(FetchMovieWithType(Constant.popular));
+  }
 }
